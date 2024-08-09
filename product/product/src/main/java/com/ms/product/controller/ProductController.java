@@ -3,6 +3,7 @@ package com.ms.product.controller;
 import java.util.List;
 
 import com.ms.product.entity.Product;
+import com.ms.product.errorHanlder.ProductNotFoundException;
 import com.ms.product.repository.ProductRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,7 @@ public class ProductController {
     Product findById(@PathVariable String id) {
         System.out.println("findById:: " + id);
         return productRepository.findById(id)
-                .orElse(new Product());
+                .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     @GetMapping

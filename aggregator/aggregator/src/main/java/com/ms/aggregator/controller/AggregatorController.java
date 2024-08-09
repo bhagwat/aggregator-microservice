@@ -42,22 +42,22 @@ public class AggregatorController {
                             .map(orderItem -> productClient.getById(orderItem.productId()))
                             .toList();
                 }
-        ).exceptionally(ex -> {
+        )/*.exceptionally(ex -> {
                     log.error("Api 4 threw  exception msg-{} ", ex.getMessage());
                     return order.items()
                             .stream()
                             .map(orderItem -> new Product(orderItem.productId(), "", ""))
                             .toList();
                 }
-        );
+        )*/;
         ;
         CompletableFuture<Customer> customerCompletableFuture = CompletableFuture.supplyAsync(() -> {
             return customerClient.getById(order.customerId());
-        }).exceptionally(ex -> {
+        })/*.exceptionally(ex -> {
                     log.error("Api 4 threw  exception msg-{} ", ex.getMessage());
                     return new Customer(order.customerId(), "", null);
                 }
-        );
+        )*/;
 
         CompletableFuture.allOf(
                 productListCompletableFuture,
@@ -70,4 +70,48 @@ public class AggregatorController {
 
         return new AggregateData(order, productList, customer);
     }
+
+/*    @GetMapping("/aggregate2/{id}")
+    public AggregateData aggregate2(@PathVariable String id) throws ExecutionException, InterruptedException {
+
+        AggregateData aggregateData = CompletableFuture
+                .supplyAsync(() -> orderClient.getById(id))
+                .thenApply(order -> {
+
+                    List<CompletableFuture<Product>> productCompletableFutures = order.items()
+                            .stream()
+                            .map(OrderItem::productId)
+                            .map(productId -> CompletableFuture.supplyAsync(() -> productClient.getById(productId)))
+                            .toList();
+
+                    CompletableFuture<Void> allProductFutures = CompletableFuture.allOf(productCompletableFutures.toArray(new CompletableFuture[0]));
+
+                    // Extract the results
+                    CompletableFuture<List<Product>> allProductsFuture = allProductFutures.thenApply(v ->
+                            productCompletableFutures.stream()
+                                    .map(CompletableFuture::join) // join to get the result of each CompletableFuture
+                                    .toList()
+                    );
+
+
+                    CompletableFuture<Customer> customerCompletableFuture = CompletableFuture.supplyAsync(() -> customerClient.getById(order.customerId()));
+
+                    try {
+                        AggregateData aggregateData1= CompletableFuture.allOf(allProductsFuture, customerCompletableFuture)
+                                .thenApply(v -> {
+                                    try {
+                                        List<Product> products = allProductsFuture.get();
+                                        Customer customer = customerCompletableFuture.get();
+                                        return new AggregateData(order, products, customer);
+                                    } catch (ExecutionException | InterruptedException e) {
+                                        return new AggregateData(order, Collections.emptyList(), new Customer(order.customerId(), "", null));
+                                    }
+                                }).get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        return aggregateData;
+    }*/
 }

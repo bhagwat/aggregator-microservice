@@ -1,0 +1,8 @@
+rootProject.name = 'aggregator-service'
+include 'common'
+include 'discovery'
+include 'customer'
+include 'product'
+include 'order'
+include 'aggregator'
+

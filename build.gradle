@@ -1,0 +1,15 @@
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    dependencies {
+//        implementation project(':common')
+//        testImplementation 'junit:junit:4.13.1'
+    }
+}
+

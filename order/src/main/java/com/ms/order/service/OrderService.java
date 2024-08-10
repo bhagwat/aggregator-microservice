@@ -60,6 +60,7 @@ public class OrderService {
                                 OrderItem orderItem = new OrderItem();
                                 orderItem.setId(Long.parseLong(row[0]));
                                 orderItem.setProductId(row[2]);
+                                orderItem.setQuantity(Integer.parseInt(row[3]));
                                 orderItem.setPrice(Double.parseDouble(row[4]));
                                 order.getItems().add(orderItem);
                                 orderRepository.save(order);

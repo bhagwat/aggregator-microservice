@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.aggregator.service;
 
 import com.ms.aggregator.dto.Product;
@@ -6,8 +12,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+/**
+ * Fallback service for ProductClient microservice
+ */
 @Slf4j
+@Component
 public class ProductClientFallback implements ProductClient {
     @Override
     public Product getById(String id) {

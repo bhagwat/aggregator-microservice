@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.aggregator.service;
 
 import com.ms.aggregator.dto.Order;
@@ -8,12 +14,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
+/**
+ * Open Feign client for Order microservice with circuit-breaker service CustomerClientFallback
+ */
 @Primary
 @FeignClient(name = "order-service", url = "${order.service.url}")
 public interface OrderClient {
-    @GetMapping("/order/{id}")
+    @GetMapping("/{id}")
     Order getById(@PathVariable("id") Long id);
 
-    @GetMapping("/order")
+    @GetMapping
     List<Order> getAll();
 }

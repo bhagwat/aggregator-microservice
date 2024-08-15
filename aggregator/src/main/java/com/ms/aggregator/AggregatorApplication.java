@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.aggregator;
 
 import org.springframework.boot.SpringApplication;

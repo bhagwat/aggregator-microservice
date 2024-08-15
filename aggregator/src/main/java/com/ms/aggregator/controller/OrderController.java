@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.aggregator.controller;
 
 import com.ms.aggregator.dto.Order;
@@ -12,6 +18,9 @@ import org.springframework.stereotype.Controller;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+/**
+ * Order related GraphQL endpoints
+ */
 @Controller
 public class OrderController {
     private final OrderClient orderClient;
@@ -23,13 +32,29 @@ public class OrderController {
         this.aggregatorService = aggregatorService;
     }
 
+    /**
+     * Graphql Query handler for getting all the orders
+     *
+     * @return Returns list of orders
+     * @throws ExecutionException   ExecutionException
+     * @throws InterruptedException InterruptedException
+     */
     @QueryMapping
     public List<Order> orders() throws ExecutionException, InterruptedException {
         return orderClient.getAll();
     }
 
+    /**
+     * Graphql Query handler for getting order details by ID
+     *
+     * @param id Order ID
+     * @return OrderWithCustomerAndProductDetail instance
+     * @throws ExecutionException   ExecutionException
+     * @throws InterruptedException InterruptedException
+     */
     @QueryMapping
-    public OrderWithCustomerAndProductDetail orderById(@Argument Long id) throws ExecutionException, InterruptedException {
+    public OrderWithCustomerAndProductDetail orderById(@Argument Long id)
+            throws ExecutionException, InterruptedException {
         return aggregatorService.getOrderDetails(id);
     }
 }

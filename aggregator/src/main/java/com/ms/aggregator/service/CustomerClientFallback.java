@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.aggregator.service;
 
 import com.ms.aggregator.dto.Customer;
@@ -6,8 +12,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
+/**
+ * Fallback service for CustomerClient microservice
+ */
 @Slf4j
+@Component
 public class CustomerClientFallback implements CustomerClient {
     @Override
     public Customer getById(Long id) {

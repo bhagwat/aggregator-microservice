@@ -4,5 +4,6 @@ include 'discovery'
 include 'customer'
 include 'product'
 include 'order'
+include 'category'
 include 'aggregator'
 

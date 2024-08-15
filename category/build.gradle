@@ -1,0 +1,77 @@
+plugins {
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.micronaut.application") version "4.4.2"
+    id("com.google.cloud.tools.jib") version "2.8.0"
+    id("io.micronaut.aot") version "4.4.2"
+}
+
+version = "0.1"
+group = "com.ms.category"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Keep only the necessary dependencies
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa") // Includes JPA and Hibernate support
+    implementation("io.micronaut.flyway:micronaut-flyway") // For Flyway migrations
+    implementation("io.micronaut.sql:micronaut-jdbc-hikari") // Connection pooling (may be included transitively)
+
+    // Serde dependencies for JSON processing
+    implementation("io.micronaut.serde:micronaut-serde-jackson")
+    annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
+
+    // HTTP client for testing
+    testImplementation("io.micronaut:micronaut-http-client")
+
+    // Runtime dependencies
+    runtimeOnly("com.h2database:h2") // In-memory database for testing
+    runtimeOnly("org.yaml:snakeyaml") // YAML parsing
+    runtimeOnly("ch.qos.logback:logback-classic") // Logging
+}
+
+application {
+    mainClass = "com.ms.category.Application"
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("21")
+    targetCompatibility = JavaVersion.toVersion("21")
+}
+
+tasks {
+    jib {
+        to {
+            image = "gcr.io/myapp/jib-image"
+        }
+    }
+}
+graalvmNative.toolchainDetection = false
+
+micronaut {
+    runtime("netty")
+    testRuntime("junit5")
+    processing {
+        incremental(true)
+        annotations("com.ms.category.*")
+    }
+    aot {
+        // Please review carefully the optimizations enabled below
+        // Check https://micronaut-projects.github.io/micronaut-aot/latest/guide/ for more details
+        optimizeServiceLoading = false
+        convertYamlToJava = false
+        precomputeOperations = true
+        cacheEnvironment = true
+        optimizeClassLoading = true
+        deduceEnvironment = true
+        optimizeNetty = true
+        replaceLogbackXml = true
+    }
+}
+
+tasks.named("dockerfileNative") {
+    jdkVersion = "21"
+}
+
+

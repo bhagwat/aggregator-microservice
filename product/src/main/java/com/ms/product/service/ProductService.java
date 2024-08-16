@@ -30,6 +30,12 @@ public class ProductService {
         this.categoryClient = categoryClient;
     }
 
+    /**
+     * Get product with category detail by ID
+     *
+     * @param productId Product ID
+     * @return ProductDto Mono
+     */
     public Optional<Mono<ProductDto>> findById(String productId) {
         return productRepository.findById(productId)
                 .map(product ->
@@ -38,14 +44,31 @@ public class ProductService {
                 );
     }
 
+    /**
+     * Get all products with category detail
+     *
+     * @return List of ProductDto
+     */
     public Mono<List<ProductDto>> findAll() {
         return populateCategories(productRepository.findAll());
     }
 
+    /**
+     * Get products with category detail for given productIds
+     *
+     * @param productIds Product Ids
+     * @return List of ProductDto
+     */
     public Mono<List<ProductDto>> findAllByIds(List<String> productIds) {
         return populateCategories(productRepository.findAllById(productIds));
     }
 
+    /**
+     * Populate category details from category-microservice and returns merged result
+     *
+     * @param products List of Products
+     * @return List of ProductDto
+     */
     private Mono<List<ProductDto>> populateCategories(List<Product> products) {
         List<String> categoryIds = products.stream().map(Product::getCategoryId).distinct().toList();
         return Optional.of(categoryIds)
@@ -63,7 +86,6 @@ public class ProductService {
                                 .toList())
                 )
                 .orElse(Mono.just(Collections.emptyList()));
-
     }
 }
 

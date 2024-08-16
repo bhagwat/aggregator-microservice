@@ -33,6 +33,12 @@ public class CategoryClient {
                 .build();
     }
 
+    /**
+     * Get category by ID
+     *
+     * @param id category id
+     * @return Mono Category
+     */
     public Mono<CategoryDto> getById(String id) {
         log.info("CategoryClient.getById called with id: {}", id);
         return webClient.get()
@@ -42,6 +48,12 @@ public class CategoryClient {
                 .onErrorResume(e -> Mono.just(new CategoryDto(id, "")));
     }
 
+    /**
+     * Get the categories for given IDs
+     *
+     * @param ids List of Category ID
+     * @return Mono of List of CategoryDto
+     */
     public Mono<List<CategoryDto>> getAllByIds(List<String> ids) {
         log.info("CategoryClient.getAllByIds called with ids: {}", ids);
         return webClient.get()
@@ -49,9 +61,14 @@ public class CategoryClient {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<CategoryDto>>() {
                 })
-                .onErrorResume(e -> Mono.just(Collections.emptyList()));
+                .onErrorResume(_ -> Mono.just(Collections.emptyList()));
     }
 
+    /**
+     * Get all the categories
+     *
+     * @return Mono of List of CategoryDTO
+     */
     public Mono<List<CategoryDto>> getAll() {
         log.info("CategoryClient.getAll called");
         return webClient.get()
@@ -59,7 +76,6 @@ public class CategoryClient {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<CategoryDto>>() {
                 })
-                .onErrorResume(e -> Mono.just(Collections.emptyList()));
+                .onErrorResume(_ -> Mono.just(Collections.emptyList()));
     }
-
 }

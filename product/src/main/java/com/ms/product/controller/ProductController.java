@@ -8,8 +8,6 @@ package com.ms.product.controller;
 
 import com.ms.product.dto.ProductDto;
 import com.ms.product.errorHanlder.ProductNotFoundException;
-import com.ms.product.repository.ProductRepository;
-import com.ms.product.service.CategoryClient;
 import com.ms.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +21,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
-    public ProductController(ProductRepository productRepository, ProductService productService, CategoryClient categoryClient) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
     }
 

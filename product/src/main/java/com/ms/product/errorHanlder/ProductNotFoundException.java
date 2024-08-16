@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.product.errorHanlder;
 
 public class ProductNotFoundException extends RuntimeException {

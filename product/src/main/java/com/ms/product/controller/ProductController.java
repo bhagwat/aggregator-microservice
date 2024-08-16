@@ -1,33 +1,48 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.product.controller;
 
-import com.ms.product.entity.Product;
+import com.ms.product.dto.ProductDto;
 import com.ms.product.errorHanlder.ProductNotFoundException;
 import com.ms.product.repository.ProductRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ms.product.service.CategoryClient;
+import com.ms.product.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/product")
 public class ProductController {
-    private final ProductRepository productRepository;
+    private final ProductService productService;
 
-    public ProductController(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public ProductController(ProductRepository productRepository, ProductService productService, CategoryClient categoryClient) {
+        this.productService = productService;
     }
 
     @GetMapping("/{id}")
-    Product findById(@PathVariable String id) {
-        System.out.println("findById:: " + id);
-        return productRepository.findById(id)
+    Mono<ProductDto> getProductById(@PathVariable String id) {
+        log.info("findById:: {}", id);
+        return productService.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
-    @GetMapping
-    List<Product> findAll() {
-        return productRepository.findAll();
+    @GetMapping()
+    Mono<List<ProductDto>> getProductsByIds(@RequestParam List<String> ids) {
+        log.info("findByIds:: {}", ids);
+        return productService.findAllByIds(ids);
+    }
+
+    @GetMapping("/all")
+    Mono<List<ProductDto>> getAllProducts() {
+        log.info("findAll");
+        return productService.findAll();
     }
 }

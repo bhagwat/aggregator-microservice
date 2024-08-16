@@ -1,62 +1,69 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.product.service;
 
+import com.ms.product.dto.CategoryDto;
+import com.ms.product.dto.ProductDto;
 import com.ms.product.entity.Product;
 import com.ms.product.repository.ProductRepository;
-import com.opencsv.CSVReader;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
-import java.io.Reader;
-import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 @Slf4j
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final CategoryClient categoryClient;
 
-    @Value("classpath:data/products.csv")
-    Resource productsCsv;
-
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, CategoryClient categoryClient) {
         this.productRepository = productRepository;
+        this.categoryClient = categoryClient;
     }
 
-    @Transactional
-    public void bootstrap() throws Exception {
-        this.boostrapCustomers();
-        this.logAllProducts();
+    public Optional<Mono<ProductDto>> findById(String productId) {
+        return productRepository.findById(productId)
+                .map(product ->
+                        categoryClient.getById(product.getCategoryId())
+                                .map(categoryDto -> ProductDto.from(product, categoryDto))
+                );
     }
 
-    private void logAllProducts() {
-        productRepository.findAll().forEach(product -> {
-                    log.info(String.format("Product ID: %s Name: %s , Desc %s", product.getId(), product.getName(), product.getDescription()));
-                }
-        );
+    public Mono<List<ProductDto>> findAll() {
+        return populateCategories(productRepository.findAll());
     }
 
-    private void boostrapCustomers() throws Exception {
-        readAllLines(productsCsv)
-                .stream()
-                .skip(1)
-                .forEach(row -> {
-                    Product product = new Product();
-                    product.setId(row[0]);
-                    product.setName(row[1]);
-                    product.setDescription(row[2]);
-                    productRepository.save(product);
-                });
+    public Mono<List<ProductDto>> findAllByIds(List<String> productIds) {
+        return populateCategories(productRepository.findAllById(productIds));
     }
 
-    private List<String[]> readAllLines(Resource resource) throws Exception {
-        try (Reader reader = Files.newBufferedReader(resource.getFile().toPath())) {
-            try (CSVReader csvReader = new CSVReader(reader)) {
-                return csvReader.readAll();
-            }
-        }
+    private Mono<List<ProductDto>> populateCategories(List<Product> products) {
+        List<String> categoryIds = products.stream().map(Product::getCategoryId).distinct().toList();
+        return Optional.of(categoryIds)
+                .filter(Predicate.not(List::isEmpty))
+                .map(ids -> categoryClient.getAllByIds(ids)
+                        .map(categoryDtos -> products
+                                .stream()
+                                .map(product -> {
+                                    var categoryDto = categoryDtos.stream()
+                                            .filter(c -> c.getId().equals(product.getCategoryId()))
+                                            .findFirst()
+                                            .orElse(new CategoryDto(product.getCategoryId(), ""));
+                                    return ProductDto.from(product, categoryDto);
+                                })
+                                .toList())
+                )
+                .orElse(Mono.just(Collections.emptyList()));
+
     }
 }
 

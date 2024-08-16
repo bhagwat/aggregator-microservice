@@ -14,6 +14,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.QueryValue;
 
 import java.util.List;
 
@@ -34,7 +35,17 @@ public class CategoryController {
      *
      * @return List of CategoryDTO
      */
-    @Get
+    @Get("/all")
+    List<CategoryDTO> getAllCategories() {
+        return categoryService.getAllCategories();
+    }
+
+    /**
+     * Get Root Categories list of CategoryDTO
+     *
+     * @return List of CategoryDTO
+     */
+    @Get("/root")
     List<CategoryDTO> getRootCategories() {
         return categoryService.getRootCategories();
     }
@@ -46,10 +57,21 @@ public class CategoryController {
      * @return CategoryDTO
      */
     @Get("/{id}")
-    HttpResponse<CategoryDTO> getCategory(@PathVariable String id) {
+    HttpResponse<CategoryDTO> getCategoryById(@PathVariable String id) {
         return categoryService.findById(id)
                 .map(HttpResponse::ok)
                 .orElse(HttpResponse.notFound());
+    }
+
+    /**
+     * Get Category detail by ID
+     *
+     * @param ids Category IDs
+     * @return List of CategoryDTO
+     */
+    @Get
+    List<CategoryDTO> getCategoriesByIds(@QueryValue List<String> ids) {
+        return categoryService.findAllById(ids);
     }
 
     /**

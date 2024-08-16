@@ -21,4 +21,6 @@ import java.util.List;
 public interface CategoryRepository extends CrudRepository<Category, String> {
     @Query("select c from Category c where c.parentCategory is null ")
     List<Category> findRootCategories();
+
+    List<Category> findAllByIdInList(List<String> ids);
 }

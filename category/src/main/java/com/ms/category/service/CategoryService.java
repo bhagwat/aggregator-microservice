@@ -45,6 +45,19 @@ public class CategoryService {
     }
 
     /**
+     * Get All categories
+     *
+     * @return List of CategoryDTO
+     */
+    @Transactional
+    public List<CategoryDTO> getAllCategories() {
+        return categoryRepository.findAll()
+                .stream()
+                .map(CategoryDTO::fromCategory)
+                .toList();
+    }
+
+    /**
      * Get Category by ID
      *
      * @return CategoryDTO instance
@@ -52,6 +65,19 @@ public class CategoryService {
     @Transactional
     public Optional<CategoryDTO> findById(String id) {
         return categoryRepository.findById(id).map(CategoryDTO::fromCategory);
+    }
+
+    /**
+     * Get Categories by ID in given list
+     *
+     * @return CategoryDTO list
+     */
+    @Transactional
+    public List<CategoryDTO> findAllById(List<String> ids) {
+        return categoryRepository.findAllByIdInList(ids)
+                .stream()
+                .map(CategoryDTO::fromCategory)
+                .toList();
     }
 
     /**
@@ -63,8 +89,8 @@ public class CategoryService {
     @Transactional
     public List<CategoryDetail> getAncestors(String id) {
         return categoryRepository.findById(id)
-                .<List<Category>>map(this::getAncestors)
-                .<List<CategoryDetail>>map(this::categoryToDetailDTO)
+                .map(this::getAncestors)
+                .map(this::categoryToDetailDTO)
                 .orElse(Collections.emptyList());
     }
 
@@ -77,8 +103,8 @@ public class CategoryService {
     @Transactional
     public List<CategoryDetail> getChildren(String id) {
         return categoryRepository.findById(id)
-                .<List<Category>>map(Category::getSubCategories)
-                .<List<CategoryDetail>>map(this::categoryToDetailDTO)
+                .map(Category::getSubCategories)
+                .map(this::categoryToDetailDTO)
                 .orElse(Collections.emptyList());
     }
 
@@ -110,6 +136,4 @@ public class CategoryService {
                 .map(c -> new CategoryDetail(c.getId(), c.getName()))
                 .toList();
     }
-
-
 }

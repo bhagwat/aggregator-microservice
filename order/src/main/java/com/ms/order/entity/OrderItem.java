@@ -1,25 +1,21 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.order.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.Data;
 
-@Getter
-@Setter
-@ToString(includeFieldNames = true)
+@Data()
 @Entity
+@Table(name = "order_items")
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
-//    @ManyToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "customer_order_id", nullable = false, updatable = false)
-//    private Order order;
 
     private String productId;
     private Integer quantity;

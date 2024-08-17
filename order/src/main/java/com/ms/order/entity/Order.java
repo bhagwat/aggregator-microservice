@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2024.
+ *
+ * @author Bhagwat Kumar
+ */
+
 package com.ms.order.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,11 +15,10 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
-@ToString(includeFieldNames = true, exclude = "items")
+
+@Data()
 @Entity
-@Table(name = "customer_order")
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

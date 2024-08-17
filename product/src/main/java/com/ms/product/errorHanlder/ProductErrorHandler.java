@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class ProductGlobalHandler {
+public class ProductErrorHandler {
     @ExceptionHandler(ProductNotFoundException.class)
     ResponseEntity<Object> handleProductNotFound(ProductNotFoundException exception) {
         Map<String, Object> resp = new HashMap<>();

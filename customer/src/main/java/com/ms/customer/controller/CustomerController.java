@@ -2,6 +2,7 @@ package com.ms.customer.controller;
 
 import com.ms.customer.entity.Customer;
 import com.ms.customer.repository.CustomerRepository;
+import com.ms.customer.util.CustomerNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +23,7 @@ public class CustomerController {
     Customer findById(@PathVariable Long id) {
         System.out.println("findById:: " + id);
         return customerRepository.findById(id)
-                .orElse(new Customer());
+                .orElseThrow(CustomerNotFoundException::new);
     }
 
     @GetMapping
